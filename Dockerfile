@@ -1,10 +1,18 @@
-FROM kyma/docker-nginx
+FROM node:slim
+MAINTAINER Asbjørn Thegler <asbjoern@gmail.com>
 
-RUN mkdir /var/www
-COPY index.html /var/www
-COPY css /var/www/css
-COPY vendor /var/www/vendor
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-RUN ls -laR /var/www
+# Install app dependencies
+COPY . /usr/src/app
+RUN npm install
 
-CMD ["nginx"]
+RUN node_modules/.bin/gulp
+
+EXPOSE 3000
+
+ENV NODE_ENV production
+
+CMD [ "npm", "start" ]
